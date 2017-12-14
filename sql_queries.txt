@@ -1,0 +1,1 @@
+select elements.name, elementLocations.lat, elementLocations.lon, MAX(elementLocations.timestamp) from elements inner join elementLocations on elementLocations.element_id = elements.id WHERE elements.active=1 GROUP BY elements.id;

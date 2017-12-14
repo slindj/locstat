@@ -1,0 +1,17 @@
+{
+  "name": "locstat",
+  "version": "0.0.1",
+  "description": "Elements and Locations",
+  "main": "locstat.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "geodesy": "^1.1.2",
+    "sqlite3": "^3.1.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Justin Slind <justin.slind@gmail.com>",
+  "license": "ISC"
+}
