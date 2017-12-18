@@ -68,7 +68,7 @@ exports.locstat_list = function(request, response) {
       console.error(err.message);
     }
   })
-  db.all("select elements.name, elementLocations.lat, elementLocations.lon, MAX(elementLocations.timestamp) as timestamp from elements inner join elementLocations on elementLocations.element_id = elements.id WHERE elements.active=1 GROUP BY elements.id", function(err, rows) {
+  db.all("select elements.id, elements.name, elementLocations.lat, elementLocations.lon, MAX(elementLocations.timestamp) as timestamp from elements inner join elementLocations on elementLocations.element_id = elements.id WHERE elements.active=1 GROUP BY elements.id", function(err, rows) {
     console.log(rows)
     response.end(JSON.stringify(rows))
     db.close()
