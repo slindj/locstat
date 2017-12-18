@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Geodesy = require('geodesy')
 const express = require('express')
 const app = express()
