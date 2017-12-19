@@ -15,7 +15,7 @@ exports.locstat_locate = function(request, response) {
 
   if (isNaN(lat) || isNaN(lon)) {
 	  if (typeof mgrs !== 'undefined') {
-	    var zone = mgrs.substring(0,1);
+	    var zone = mgrs.match(/\d+/i)[0];
 	    var band = mgrs.charAt(2)
 	    var e100k = mgrs.charAt(3)
 	    var n100k = mgrs.charAt(4)
@@ -69,7 +69,7 @@ exports.locstat_list = function(request, response) {
     }
   })
   db.all("select elements.id, elements.name, elementLocations.lat, elementLocations.lon, MAX(elementLocations.timestamp) as timestamp from elements inner join elementLocations on elementLocations.element_id = elements.id WHERE elements.active=1 GROUP BY elements.id", function(err, rows) {
-    console.log(rows)
+    //console.log(rows)
     response.end(JSON.stringify(rows))
     db.close()
     });
