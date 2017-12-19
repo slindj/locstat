@@ -15,14 +15,34 @@ exports.locstat_locate = function(request, response) {
 
   if (isNaN(lat) || isNaN(lon)) {
 	  if (typeof mgrs !== 'undefined') {
-	    var zone = mgrs.match(/\d+/i)[0];
-	    var band = mgrs.charAt(2)
-	    var e100k = mgrs.charAt(3)
-	    var n100k = mgrs.charAt(4)
+	    //var zone = mgrs.match(/\d+/i);
+      var match = mgrs.match(/(^\d+)([A-Z])([A-Z])([A-Z])(\d{10})/)
+      if (match == null)
+      {
+        console.log("Could not parse MGRS.  Returning 400");
+        response.status('400').send("Check Variables");
+        return;
+      }
+      var zone = match[1]
+      var band = match[2]
+      var e100k = match[3]
+      var n100k = match[4]
+      //if (Array.isArray(zone))
+      //  zone = zone[0]
+	    //var band = mgrs.charAt(2)
+	    //var e100k = mgrs.charAt(3)
+	    //var n100k = mgrs.charAt(4)
 	    
-	    var easting = parseInt(mgrs.substring(5,9))
-	    var northing = parseInt(mgrs.substring(10,14))
-	    
+	    var easting = parseInt(match[5].substring(0,5))
+	    var northing = parseInt(match[5].substring(5))
+      
+      //check variables
+      if (typeof zone == 'undefined' | zone == null | isNaN(zone)| parseInt(zone) > 100 | parseInt(zone) < 1 | typeof band == 'undefined' | band.length != 1	)
+          {
+            console.log("Could not parse MGRS.  Returning 400"); 
+            response.status('400').send("Check Variables");
+            return;
+          }
 	    var loc_mgrs = new Geodesy.Mgrs(zone,band,e100k,n100k,easting,northing)
 	    var ll = loc_mgrs.toUtm().toLatLonE()
 	    //console.log(ll.toString())
