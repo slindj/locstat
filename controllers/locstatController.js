@@ -1,6 +1,26 @@
 const sqlite3 = require('sqlite3').verbose();
 const Geodesy = require('geodesy')
 
+function change_active(request, response, id, active) {
+  
+  var url = require('url')
+  var id = parseInt(url.parse(request.url, true).query['id'])
+  console.log("Hiding " + id)
+
+  let db = new sqlite3.Database('./41sigs.db',sqlite3.OPEN_READWRITE, (err) => {
+    if (err) {
+      onsole.error(err.message);
+    }
+  })
+  db.serialize(() => {
+    var element_active = db.prepare("UPDATE elements SET active = (?) where id = (?)",active,id)
+    element_active.run()
+    element_active.finalize()
+  })
+  db.close()
+  response.end("okay")
+}
+
 exports.locstat_locate = function(request, response) {
     console.log(request.url)
 
@@ -80,6 +100,7 @@ exports.locstat_locate = function(request, response) {
 	//response.end(mgrs.toString())
   //})
 }
+
 exports.locstat_list = function(request, response) {
   console.log(request.url)
 
@@ -93,7 +114,34 @@ exports.locstat_list = function(request, response) {
     response.end(JSON.stringify(rows))
     db.close()
     });
-	}
+}
+
+exports.locstat_list_all = function(request, response) {
+  console.log(request.url)
+  let db = new sqlite3.Database('./41sigs.db',sqlite3.OPEN_READ, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+  })
+  db.all("select elements.id, elements.name, elementLocations.lat, elementLocations.lon, MAX(elementLocations.timestamp) as timestamp, elements.active from elements inner join elementLocations on elementLocations.element_id = elements.id GROUP BY elements.id", function(err, rows) {
+    response.end(JSON.stringify(rows))
+    db.close()
+  });
+}
+
+exports.set_active = function(request, response) {
+  var url = require('url')
+  console.log(request.url)
+  var id = parseInt(url.parse(request.url, true).query['id'])
+  change_active(request, response, id, 1)
+}
+
+exports.set_inactive = function(request, response) {
+  var url = require('url')
+  console.log(request.url)
+  var id = parseInt(url.parse(request.url, true).query['id'])
+  change_active(request, response, id, 0)
+}
 
 
 
