@@ -71,34 +71,38 @@ exports.locstat_locate = function(request, response) {
 	    //console.log(lat + ", " + lon)
 	  }
 	  else {
-	    response.end("Check variables")
+	    response.end("Check variables");
 	  }
   }
 
   console.log(lat + ", " + lon)
-  let db = new sqlite3.Database('./41sigs.db',sqlite3.OPEN_READWRITE, (err) => {
-    if (err) {
-      console.error(err.message);
-    }
-
-
-  })
-  db.serialize(() => {
-	  //var locupdate = db.prepare("UPDATE elementLocations SET lat = (?), lon = (?) where name = (?)",lat,lon,name)
-	  var locinsert = db.prepare("INSERT into elementLocations (element_id, lat, lon, timestamp) VALUES (?,?,?,?)",id,lat,lon,time)
-	  locinsert.run()
-	  locinsert.finalize()
-  })
-  //db.each("SELECT * from elementLocations", function (err, row) {
+  //check lat and lon are within acceptable range
+  if (lat >= -90 & lat <= 90 & lon >= -180 & lon <= 180) {
+    let db = new sqlite3.Database('./41sigs.db',sqlite3.OPEN_READWRITE, (err) => {
+      if (err) {
+        console.error(err.message);
+      }
+    })  
+    db.serialize(() => {
+	    //var locupdate = db.prepare("UPDATE elementLocations SET lat = (?), lon = (?) where name = (?)",lat,lon,name)
+	    var locinsert = db.prepare("INSERT into elementLocations (element_id, lat, lon, timestamp) VALUES (?,?,?,?)",id,lat,lon,time)
+	    locinsert.run()
+	    locinsert.finalize()
+    })
+    //db.each("SELECT * from elementLocations", function (err, row) {
 	
-	db.close()
-	response.end("okay")
-	//var ll = new Geodesy.LatLonEllipsoidal(lat,lon);
-	//var utm = ll.toUtm();
-	//var mgrs = utm.toMgrs()
-	//console.log(mgrs.toString())
-	//response.end(mgrs.toString())
-  //})
+  	db.close()
+  	response.end("okay")
+  	//var ll = new Geodesy.LatLonEllipsoidal(lat,lon);
+  	//var utm = ll.toUtm();
+  	//var mgrs = utm.toMgrs()
+  	//console.log(mgrs.toString())
+  	//response.end(mgrs.toString())
+   //})
+  }
+  else {
+    response.end("Check variables");
+  }
 }
 
 exports.locstat_list = function(request, response) {
